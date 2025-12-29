@@ -64,6 +64,11 @@ start_compose() {
 # Main execution logic
 echo "=== Podman GNS3 Container Starting ==="
 
+# Start Podman system service in the background
+echo "Starting Podman system service..."
+podman system service --time=0 unix:///run/podman/podman.sock &
+sleep 2  # Give the service time to start
+
 # Handle PODMAN_COMPOSE_URL
 if [ -n "$PODMAN_COMPOSE_URL" ]; then
     echo "Processing PODMAN_COMPOSE_URL: $PODMAN_COMPOSE_URL"

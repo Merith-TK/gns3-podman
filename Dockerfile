@@ -7,6 +7,7 @@ RUN apk add --no-cache \
     podman \
     podman-compose \
     podman-tui \
+    fuse-overlayfs \
     wget \
     curl \
     unzip \
@@ -14,8 +15,14 @@ RUN apk add --no-cache \
     gzip \
     make
 
-# Configure Podman for rootless operation (running as root, but setup for compatibility)
+# Configure Podman for running inside a container
 RUN mkdir -p /etc/containers
+
+# Configure storage to use vfs driver (compatible with nested containers)
+RUN printf '[storage]\n\ndriver = "vfs"\n' > /etc/containers/storage.conf
+
+# Configure containers.conf for cgroups v2 and disable resource limits
+RUN printf '[engine]\n\ncgroup_manager = "cgroupfs"\nevents_logger = "file"\n\n[engine.runtimes]\n' > /etc/containers/containers.conf
 
 # Create workspace directory for podman projects
 RUN mkdir -p /workspace
