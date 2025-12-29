@@ -37,7 +37,7 @@ jobs:
           docker buildx build \
             --platform linux/amd64,linux/arm64 \
             --tag $REPO_HOST/$REPO_PATH:${{ github.sha }} \
-            --tag $REPO_HOST/$REPO_PATH:nightly \
+            --tag $REPO_HOST/$REPO_PATH:latest \
             --push \
             .
 
