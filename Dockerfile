@@ -8,6 +8,8 @@ RUN apk add --no-cache \
     podman-compose \
     podman-tui \
     fuse-overlayfs \
+    iptables \
+    ip6tables \
     wget \
     curl \
     unzip \
