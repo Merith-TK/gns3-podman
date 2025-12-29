@@ -140,11 +140,17 @@ if [ -n "$PODMAN_COMMAND" ]; then
     eval "$PODMAN_COMMAND" &
 fi
 
-# Check if podman-tui is available, otherwise use xterm
-if command -v podman-tui >/dev/null 2>&1; then
-    echo "Launching podman-tui..."
-    xterm -e podman-tui
+# Check if running with GUI (DISPLAY variable set)
+if [ -n "$DISPLAY" ]; then
+    # Check if podman-tui is available, otherwise use xterm
+    if command -v podman-tui >/dev/null 2>&1; then
+        echo "Launching podman-tui..."
+        xterm -e podman-tui
+    else
+        echo "podman-tui not available, launching xterm..."
+        xterm -e 'echo "Podman TUI is not installed. Please install podman-tui to use the interface."; bash'
+    fi
 else
-    echo "podman-tui not available, launching xterm..."
-    xterm -e 'echo "Podman TUI is not installed. Please install podman-tui to use the interface."; bash'
+    echo "No GUI detected, dropping to shell..."
+    bash
 fi
