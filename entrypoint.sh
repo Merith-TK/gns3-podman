@@ -4,6 +4,10 @@
 # PODMAN_COMPOSE_URL - URL to compose file or bootstrap archive (.zip, .tar, .tar.gz)
 # PODMAN_COMMAND - Direct podman command to execute
 
+if [ ! -z "$DEBUG" ]; then
+    set -x
+fi
+
 WORKSPACE="/workspace"
 cd "$WORKSPACE" || exit 1
 
@@ -61,13 +65,54 @@ start_compose() {
     fi
 }
 
+# Function to check if podman service is running
+is_podman_service_running() {
+    podman info >/dev/null 2>&1
+    return $?
+}
+
+# Function to start and verify podman service
+ensure_podman_service() {
+    local max_retries=5
+    local retry_count=0
+    
+    echo "Checking Podman service status..."
+    
+    # Check if already running
+    if is_podman_service_running; then
+        echo "Podman service is already running"
+        return 0
+    fi
+    
+    echo "Starting Podman system service..."
+    podman system service --time=0 unix:///podman/podman.sock &
+    local service_pid=$!
+    
+    # Wait and verify service is running
+    while [ $retry_count -lt $max_retries ]; do
+        sleep 2
+        
+        if is_podman_service_running; then
+            echo "Podman service is running (PID: $service_pid)"
+            return 0
+        fi
+        
+        retry_count=$((retry_count + 1))
+        echo "Waiting for Podman service to start... (attempt $retry_count/$max_retries)"
+    done
+    
+    echo "ERROR: Failed to start Podman service after $max_retries attempts"
+    return 1
+}
+
 # Main execution logic
 echo "=== Podman GNS3 Container Starting ==="
 
-# Start Podman system service in the background
-echo "Starting Podman system service..."
-podman system service --time=0 unix:///run/podman/podman.sock &
-sleep 2  # Give the service time to start
+# Ensure Podman service is running
+if ! ensure_podman_service; then
+    echo "Cannot continue without Podman service"
+    exit 1
+fi
 
 # Handle PODMAN_COMPOSE_URL
 if [ -n "$PODMAN_COMPOSE_URL" ]; then

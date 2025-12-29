@@ -27,7 +27,7 @@ RUN printf '[storage]\n\ndriver = "vfs"\n' > /etc/containers/storage.conf
 RUN printf '[engine]\n\ncgroup_manager = "cgroupfs"\nevents_logger = "file"\n\n[engine.runtimes]\n' > /etc/containers/containers.conf
 
 # Create workspace directory for podman projects
-RUN mkdir -p /workspace
+RUN mkdir -p /workspace /podman
 
 ## STOP setting up your image here
 # DO NOT REMOVE AND DO NOT ADD AN "ENTRYPOINT" COMMAND
