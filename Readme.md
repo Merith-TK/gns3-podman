@@ -1,43 +1,90 @@
-# 🖥️ GNS3 VNC Appliance Template
+# � GNS3 Podman VNC Appliance
 
 > **Base Image**: `git.merith.xyz/gns3/base-vnc:latest`  
-Create custom VNC appliances for GNS3 with automatic startup scripts.
+Run Podman containers inside GNS3 with VNC access and automatic container management.
 
 ---
 
 ## 🚀 Quick Start
 
-1. **Clone the template**:
+**Build the image**:
 ```bash
-git clone https://git.merith.xyz/gns3/vnc-template.git
-cd vnc-template
+docker build -t git.merith.xyz/gns3/podman:latest .
+docker push git.merith.xyz/gns3/podman:latest
 ```
 
-2. **Customize your appliance**:
-```dockerfile
-FROM git.merith.xyz/gns3/base-vnc:latest
+---
 
-## ADD YOUR CUSTOMIZATIONS HERE ##
-RUN apk add --no-cache firefox-esr xterm
+## 🔧 Configuration Methods
 
-## END CUSTOMIZATION ##
-COPY ./entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
-```
+Configure Podman containers using environment variables in GNS3:
 
-3. **Configure startup** (`entrypoint.sh`):
+### Method 1: Compose File URL
+Point to a `docker-compose.yml` or `compose.yml` file:
 ```bash
-#!/bin/bash
-# Start your applications automatically:
-firefox &  # Launch in background
-xterm      # Keep terminal open
+PODMAN_COMPOSE_URL=https://example.com/docker-compose.yml
 ```
 
-4. **Build and push**:
+### Method 2: Bootstrap Archive
+Point to a `.zip`, `.tar`, or `.tar.gz` containing:
+- `docker-compose.yml` or `compose.yml`
+- Any required configuration files
+- Optional `Makefile` with `podman-init` target for setup
+
 ```bash
-docker build -t your-registry/vnc-firefox:latest .
-docker push your-registry/vnc-firefox:latest
+PODMAN_COMPOSE_URL=https://example.com/project.zip
 ```
+
+If a `Makefile` with `podman-init:` target exists, it will be executed before starting compose.
+
+### Method 3: Direct Podman Command
+Execute a raw podman command:
+```bash
+PODMAN_COMMAND="podman run -d -p 8080:80 nginx:alpine"
+```
+
+---
+
+## 🖥️ Usage
+
+1. **GNS3 Setup**: Create Docker VM template with image `git.merith.xyz/gns3/podman:latest`
+2. **Set Environment Variables**: Add `PODMAN_COMPOSE_URL` or `PODMAN_COMMAND` in template settings
+3. **Start Instance**: Launch in GNS3
+4. **Connect via VNC**: Access the instance through GNS3's VNC viewer
+5. **Manage Containers**: Use `podman-tui` (TUI interface) or `xterm` for manual control
+
+---
+
+## 📦 Example Bootstrap Archive Structure
+
+```
+project.zip
+├── docker-compose.yml    # Required: Compose configuration
+├── .env                  # Optional: Environment variables
+├── config/              # Optional: Configuration files
+│   └── app.conf
+└── Makefile             # Optional: Setup automation
+```
+
+**Example Makefile**:
+```makefile
+podman-init:
+	@echo "Initializing project..."
+	mkdir -p volumes/data
+	chmod 777 volumes/data
+	@echo "Setup complete"
+```
+
+---
+
+## 🛠️ Included Tools
+
+- **podman** - Container runtime
+- **podman-compose** - Docker Compose compatibility
+- **podman-tui** - Terminal UI for container management
+- **wget/curl** - File downloading
+- **unzip/tar/gzip** - Archive extraction
+- **make** - Makefile automation
 
 ---
 
