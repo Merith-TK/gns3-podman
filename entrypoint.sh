@@ -67,8 +67,7 @@ start_compose() {
 
 # Function to check if podman service is running
 is_podman_service_running() {
-    podman info >/dev/null 2>&1
-    return $?
+    [ -S /podman/podman.sock ]
 }
 
 # Function to start and verify podman service
@@ -87,21 +86,24 @@ ensure_podman_service() {
     echo "Starting Podman system service..."
     podman system service --time=0 unix:///podman/podman.sock &
     local service_pid=$!
+    echo "Started service with PID: $service_pid"
     
     # Wait and verify service is running
     while [ $retry_count -lt $max_retries ]; do
         sleep 2
         
         if is_podman_service_running; then
-            echo "Podman service is running (PID: $service_pid)"
+            echo "Podman service socket is active: /podman/podman.sock"
             return 0
         fi
         
         retry_count=$((retry_count + 1))
-        echo "Waiting for Podman service to start... (attempt $retry_count/$max_retries)"
+        echo "Waiting for Podman service socket... (attempt $retry_count/$max_retries)"
     done
     
     echo "ERROR: Failed to start Podman service after $max_retries attempts"
+    echo "Check: ls -la /podman/"
+    ls -la /podman/ 2>&1 || echo "Directory does not exist"
     return 1
 }
 
