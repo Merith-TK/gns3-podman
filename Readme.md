@@ -24,7 +24,7 @@ Configure via GNS3 template settings:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `COMPOSE_FILE` | URL to compose file or `.tar`/`.tar.gz` archive | `https://example.com/app.tar.gz` |
-| `PODMAN_COMMAND` | Direct podman command to execute | `run -d nginx:alpine` |
+| `PODMAN_RUN` | Direct podman run command to execute | `-p 80:80 nginx:alpine` |
 | `DEBUG` | Enable verbose output | `true` |
 
 ---
@@ -60,7 +60,7 @@ project.tar.gz
 
 ## 🎯 Usage
 
-1. Set `COMPOSE_FILE` or `PODMAN_COMMAND` in GNS3 template
+1. Set `COMPOSE_FILE` or `PODMAN_RUN` in GNS3 template
 2. Launch instance in GNS3
 3. Connect via VNC to access `podman-tui`
 4. Or SSH/console for headless access

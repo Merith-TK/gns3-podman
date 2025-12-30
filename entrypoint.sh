@@ -1,7 +1,7 @@
 #!/bin/bash
 # Environment variables:
 # COMPOSE_FILE - URL to compose file or bootstrap archive (.tar, .tar.gz)
-# PODMAN_COMMAND - Direct podman command to execute
+# PODMAN_RUN - Direct podman command to execute
 
 [ -n "$DEBUG" ] && set -x
 
@@ -51,7 +51,7 @@ if [ -n "$COMPOSE_FILE" ]; then
 fi
 
 # Execute direct command
-[ -n "$PODMAN_COMMAND" ] && eval "podman $PODMAN_COMMAND" &
+[ -n "$PODMAN_RUN" ] && eval "podman run $PODMAN_RUN" &
 
 # Launch UI or shell
 if [ -n "$DISPLAY" ]; then
