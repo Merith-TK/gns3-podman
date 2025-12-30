@@ -15,7 +15,8 @@ RUN apk add --no-cache \
     unzip \
     tar \
     gzip \
-    make
+    make \
+    nano
 
 # Configure Podman for running inside a container
 RUN mkdir -p /etc/containers
@@ -28,6 +29,8 @@ RUN printf '[engine]\n\ncgroup_manager = "cgroupfs"\nevents_logger = "file"\n\n[
 
 # Create workspace directory for podman projects
 RUN mkdir -p /workspace /podman
+
+VOLUME [ "/workspace", "/etc/containers", "/var/lib/containers" ]
 
 ## STOP setting up your image here
 # DO NOT REMOVE AND DO NOT ADD AN "ENTRYPOINT" COMMAND

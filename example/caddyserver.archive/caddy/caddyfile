@@ -1,4 +1,4 @@
-http://0.0.0.0 {
+http://:80{
     root * /srv/
     file_server {
         index index.html
