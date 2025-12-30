@@ -24,7 +24,7 @@ Configure via GNS3 template settings:
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `COMPOSE_FILE` | URL to compose file or `.tar`/`.tar.gz` archive | `https://example.com/app.tar.gz` |
-| `PODMAN_COMMAND` | Direct podman command to execute | `podman run -d nginx:alpine` |
+| `PODMAN_COMMAND` | Direct podman command to execute | `run -d nginx:alpine` |
 | `DEBUG` | Enable verbose output | `true` |
 
 ---

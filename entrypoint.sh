@@ -51,7 +51,7 @@ if [ -n "$COMPOSE_FILE" ]; then
 fi
 
 # Execute direct command
-[ -n "$PODMAN_COMMAND" ] && eval "$PODMAN_COMMAND" &
+[ -n "$PODMAN_COMMAND" ] && eval "podman $PODMAN_COMMAND" &
 
 # Launch UI or shell
 if [ -n "$DISPLAY" ]; then
