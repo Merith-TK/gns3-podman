@@ -19,16 +19,19 @@ RUN apk add --no-cache \
     nano
 
 # Configure Podman for running inside a container
-RUN mkdir -p /etc/containers
+RUN mkdir -p /etc/containers /var/lib/containers/storage
 
-# Configure storage to use vfs driver (compatible with nested containers)
-RUN printf '[storage]\n\ndriver = "vfs"\n' > /etc/containers/storage.conf
+# Configure storage to use vfs driver with explicit paths
+RUN printf '[storage]\ndriver = "vfs"\nrunroot = "/var/run/containers/storage"\ngraphroot = "/var/lib/containers/storage"\n\n[storage.options]\nmount_program = "/usr/bin/fuse-overlayfs"\n' > /etc/containers/storage.conf
 
-# Configure containers.conf for cgroups v2 and disable resource limits
-RUN printf '[engine]\n\ncgroup_manager = "cgroupfs"\nevents_logger = "file"\n\n[engine.runtimes]\n' > /etc/containers/containers.conf
+# Configure containers.conf
+RUN printf '[engine]\ncgroup_manager = "cgroupfs"\nevents_logger = "file"\nruntime = "crun"\n' > /etc/containers/containers.conf
 
-# Create workspace directory for podman projects
-RUN mkdir -p /workspace /podman
+# Create necessary directories
+RUN mkdir -p /workspace /podman /var/run/containers/storage /var/lib/containers/storage
+
+# Set environment variables for podman
+ENV PODMAN_IGNORE_CGROUPSV1_WARNING=1
 
 VOLUME [ "/workspace", "/etc/containers", "/var/lib/containers" ]
 

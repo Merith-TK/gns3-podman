@@ -5,6 +5,8 @@
 
 [ -n "$DEBUG" ] && set -x
 
+export PODMAN_IGNORE_CGROUPSV1_WARNING=1
+
 WORKSPACE="/workspace"
 cd "$WORKSPACE" || exit 1
 
